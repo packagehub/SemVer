@@ -1,0 +1,17 @@
+{
+    "name": "package-hub/semver",
+    "description": "Package to check version according to Semantic Versioning 2.0.0 (http://semver.org).",
+    "type": "library",
+    "license": "MIT",
+    "homepage": "https://github.com/PackageHub/SemVer",
+    "keywords": ["php", "semver"],
+    "autoload": {
+        "psr-0": {
+            "PhSemVer": "src/",
+            "PhSemVerTest": "tests/"
+        }
+    },
+    "require": {
+        "php": ">=5.3.3"
+    }
+}
