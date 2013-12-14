@@ -51,7 +51,7 @@ class OperatorConstraint implements ConstraintInterface
     /**
      * Check, if semantic version matches constraint
      *
-     * @param Version $version
+     * @param  Version $version
      * @return boolean
      */
     public function match(Version $version)
@@ -62,8 +62,8 @@ class OperatorConstraint implements ConstraintInterface
     /**
      * Get sub constraint for operator and version
      *
-     * @param string $operator
-     * @param string $version
+     * @param  string              $operator
+     * @param  string              $version
      * @return ConstraintInterface
      */
     protected function getConstraint($operator, $version)
@@ -91,6 +91,7 @@ class OperatorConstraint implements ConstraintInterface
                     //next minor
                     $nextBigVersion->updateMinor();
                 }
+
                 return new AndConstraint(array(
                     new BaseOperatorConstraint('>=', new Version($version)),
                     new BaseOperatorConstraint('<', $nextBigVersion),

@@ -21,7 +21,7 @@ interface ConstraintInterface
     /**
      * Check, if semantic version matches constraint
      *
-     * @param Version $version
+     * @param  Version $version
      * @return boolean
      */
     public function match(Version $version);

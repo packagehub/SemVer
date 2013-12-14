@@ -37,7 +37,7 @@ class BaseOperatorConstraint implements ConstraintInterface
     /**
      * Create constraint from operator and version
      *
-     * @param string $operator
+     * @param string  $operator
      * @param Version $semVer
      */
     public function __construct($operator, Version $semVer)
@@ -52,7 +52,7 @@ class BaseOperatorConstraint implements ConstraintInterface
     /**
      * Check, if semantic version matches constraint
      *
-     * @param Version $version
+     * @param  Version $version
      * @return boolean
      */
     public function match(Version $version)

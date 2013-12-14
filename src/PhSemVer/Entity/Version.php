@@ -65,8 +65,8 @@ class Version
     /**
      * Initialize version from string
      *
-     * @param string $versionString
-     * @param int $default
+     * @param  string $versionString
+     * @param  int    $default
      * @return void
      */
     public function __construct($versionString, $default = 0)
@@ -101,6 +101,7 @@ class Version
         if (null === $this->minor && $useDefault) {
             return $this->default;
         }
+
         return $this->minor;
     }
 
@@ -109,6 +110,7 @@ class Version
         if (null === $this->patch && $useDefault) {
             return $this->default;
         }
+
         return $this->patch;
     }
 
@@ -121,6 +123,7 @@ class Version
         if (!empty($this->posts)) {
             $string .= '+' . implode('.', $this->posts);
         }
+
         return $string;
     }
 
@@ -131,6 +134,7 @@ class Version
         $this->patch = 0;
         $this->pres = array();
         $this->posts = array();
+
         return $this;
     }
 
@@ -143,6 +147,7 @@ class Version
         $this->patch = 0;
         $this->pres = array();
         $this->posts = array();
+
         return $this;
     }
 
@@ -154,6 +159,7 @@ class Version
         $this->patch++;
         $this->pres = array();
         $this->posts = array();
+
         return $this;
     }
 
@@ -166,13 +172,14 @@ class Version
     {
         $string = implode('.', array($this->getMajor(), $this->getMinor(), $this->getPatch()));
         $string .= $this->getAppendedString();
+
         return $string;
     }
 
     /**
      * Compare with version instance (return as soon as differences are found)
      *
-     * @param Version $version
+     * @param  Version $version
      * @return int
      */
     public function compare(Version $version)
@@ -186,7 +193,7 @@ class Version
             }
         }
         foreach (array('pres', 'posts') as $part) {
-            $cmp = (int)empty($this->$part) - (int)empty($version->$part);
+            $cmp = (int) empty($this->$part) - (int) empty($version->$part);
             if (0 != $cmp) {
                 //stop if different
                 return ('pres' == $part) ? $cmp : -$cmp;
@@ -196,6 +203,7 @@ class Version
                 return $cmp;
             }
         }
+
         return 0;
     }
 
@@ -213,8 +221,8 @@ class Version
     /**
      * Compare arrays of pres or posts from two versions
      *
-     * @param array $version1
-     * @parma array $version2
+     * @param  array $version1
+     * @parma  array $version2
      * @return int
      */
     protected function compareArray(array $version1, array $version2)
@@ -228,40 +236,53 @@ class Version
             if (!isset($version2[$count])) {
                 return 1;
             }
-            if (is_int($version1[$count])) {
-                if (is_int($version2[$count])) {
+            switch ($this->getCompareType($version1[$count], $version2[$count])) {
+                case 'ii':
                     //both ints
                     $cmp = $version1[$count] - $version2[$count];
-                    if (0 != $cmp) {
-                        //stop if different
-                        return $cmp;
-                    }
-                } else {
+                    break;
+                case 'is':
                     //int before string
                     return -1;
-                }
-            } else {
-                if (is_int($version2[$count])) {
+                    break;
+                case 'si':
                     //string after int
                     return 1;
-                } else {
+                    break;
+                case 'ss':
+                default:
                     //both strings
                     $cmp = strcasecmp($version1[$count], $version2[$count]);
-                    if (0 != $cmp) {
-                        //stop if different
-                        return $cmp;
-                    }
-                }
+                    break;
+            }
+            if (0 != $cmp) {
+                //stop if different
+                return $cmp;
             }
             $count++;
         }
+
         return 0;
+    }
+
+    /**
+     * Get comparison type of two version parts
+     *
+     * @param  int|string $version1
+     * @parma  int|string $version2
+     * @return string
+     */
+    protected function getCompareType($version1, $version2)
+    {
+        $type = (is_int($version1) ? 'i' : 's');
+        $type .= (is_int($version2) ? 'i' : 's');
+        return $type;
     }
 
     /**
      * Get appended version levels seperated by .
      *
-     * @param string $version
+     * @param  string $version
      * @return array
      */
     protected function getAppendedVersionLevels($version)
@@ -273,6 +294,7 @@ class Version
                 $matches[$key] = intval($value);
             }
         }
+
         return $matches;
     }
 }

@@ -45,20 +45,12 @@ class Constraints implements ConstraintInterface
         $constraintsPattern = '/' . $connectorPattern . '(?<constraint>' . $intervalConstraintPattern . '|'
             . $operatorConstraintPattern . ')/i';
         if (!preg_match_all($constraintsPattern, $constraintsString, $matches)) {
-              throw new InvalidArgumentException('invalid constraints string ' . $constraintsString);
+            throw new InvalidArgumentException('invalid constraints string ' . $constraintsString);
         }
         $count = count($matches[0]);
         $constraints = array();
-        $connector = null;
         for ($i = 0; $i < $count; $i++) {
-            /*if (!empty($matches['ic'][$i])) {
-                $constraint = new IntervalConstraint(
-                    $matches['op'][$i],
-                    $matches['v1'][$i],
-                    $matches['v2'][$i],
-                    $matches['cp'][$i]
-                );
-            } else*/if (!empty($matches['oc'][$i])) {
+            if (!empty($matches['oc'][$i])) {
                 $constraints[] = new OperatorConstraint($matches['o'][$i], $matches['v'][$i]);
             }
         }
@@ -68,7 +60,7 @@ class Constraints implements ConstraintInterface
     /**
      * Check, if semantic version matches constraint
      *
-     * @param Version $version
+     * @param  Version $version
      * @return boolean
      */
     public function match(Version $version)

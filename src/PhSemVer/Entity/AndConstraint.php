@@ -11,8 +11,6 @@
 
 namespace PhSemVer\Entity;
 
-use PhSemVer\Exception\InvalidArgumentException;
-
 /**
  * Model of semantic version and constraint.
  *
@@ -40,7 +38,7 @@ class AndConstraint implements ConstraintInterface
     /**
      * Check, if semantic version matches constraint
      *
-     * @param Version $version
+     * @param  Version $version
      * @return boolean
      */
     public function match(Version $version)
@@ -50,6 +48,7 @@ class AndConstraint implements ConstraintInterface
                 return false;
             }
         }
+
         return true;
     }
 

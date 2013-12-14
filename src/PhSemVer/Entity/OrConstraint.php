@@ -11,8 +11,6 @@
 
 namespace PhSemVer\Entity;
 
-use PhSemVer\Exception\InvalidArgumentException;
-
 /**
  * Model of semantic version orconstraint.
  *
@@ -40,7 +38,7 @@ class OrConstraint implements ConstraintInterface
     /**
      * Check, if semantic version matches constraint
      *
-     * @param Version $version
+     * @param  Version $version
      * @return boolean
      */
     public function match(Version $version)
@@ -50,6 +48,7 @@ class OrConstraint implements ConstraintInterface
                 return true;
             }
         }
+
         return false;
     }
 
@@ -63,4 +62,3 @@ class OrConstraint implements ConstraintInterface
         return implode(' || ' . $this->constraints);
     }
 }
-

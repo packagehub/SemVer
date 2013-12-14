@@ -23,8 +23,8 @@ class SemVer
     /**
      * compare two version strings
      *
-     * @param string $v1
-     * @param string $v2
+     * @param  string $v1
+     * @param  string $v2
      * @return int
      */
     public function compareVersionStrings($v1, $v2)
@@ -35,8 +35,8 @@ class SemVer
     /**
      * compare two version instances
      *
-     * @param Version $v1
-     * @param Version $v2
+     * @param  Version $v1
+     * @param  Version $v2
      * @return int
      */
     public function compareVersions(Version $v1, Version $v2)
@@ -47,7 +47,7 @@ class SemVer
     /**
      * sort an array of version strings
      *
-     * @param array &$versions
+     * @param  array &$versions
      * @return array of version strings
      */
     public function sortVersionStrings(array &$versions)
@@ -58,7 +58,7 @@ class SemVer
     /**
      * sort an array of version instances
      *
-     * @param array &$versions
+     * @param  array &$versions
      * @return bool true on success or false on failure
      */
     public function sortVersions(array &$versions)

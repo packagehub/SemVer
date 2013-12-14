@@ -39,7 +39,7 @@ class SemVerTest extends \PHPUnit_Framework_TestCase
      * tests comparing of version strings
      * @param string $v1
      * @param string $v2
-     * @param int $result
+     * @param int    $result
      * @dataProvider compareVersionStringsProvider
      * @covers \PhSemVer\Service\SemVer::compareVersionStrings
      */
@@ -52,7 +52,7 @@ class SemVerTest extends \PHPUnit_Framework_TestCase
      * tests comparing of version strings
      * @param Version $v1
      * @param Version $v2
-     * @param int $result
+     * @param int     $result
      * @dataProvider compareVersionsProvider
      * @covers \PhSemVer\Service\SemVer::compareVersions
      */
