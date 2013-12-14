@@ -158,21 +158,6 @@ class Version
     }
 
     /**
-     * Validate version string
-     *
-     * @param string $versionString
-     * @return string|false valid part of version string or false
-     */
-    public static function validateVersion($versionString)
-    {
-        $re = "/(?P<major>\d+)\.(?P<minor>\d+)\.(?P<patch>\d+)(?:-(?P<pres>[\da-z\-]+(?:\.[\da-z\-]+)*))?(?:\+(?P<posts>[\da-z\-]+(?:\.[\da-z\-]+)*))?/i";
-        if (!preg_match($re, $versionString, $matches)) {
-            return false;
-        }
-        return $matches[0];
-    }
-
-    /**
      * Export version as string
      *
      * @return string

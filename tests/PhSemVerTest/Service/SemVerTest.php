@@ -34,35 +34,86 @@ class SemVerTest extends \PHPUnit_Framework_TestCase
     {
         $this->semVer = new SemVer();
     }
+
+    /**
+     * tests comparing of version strings
+     * @param string $v1
+     * @param string $v2
+     * @param int $result
+     * @dataProvider compareVersionStringsProvider
+     * @covers \PhSemVer\Service\SemVer::compareVersionStrings
+     */
+    public function testCompareVersionStrings($v1, $v2, $result)
+    {
+        $this->assertEquals($this->semVer->compareVersionStrings($v1, $v2), $result);
+    }
+
+    /**
+     * tests comparing of version strings
+     * @param Version $v1
+     * @param Version $v2
+     * @param int $result
+     * @dataProvider compareVersionsProvider
+     * @covers \PhSemVer\Service\SemVer::compareVersions
+     */
+    public function testCompareVersions(Version $v1, Version $v2, $result)
+    {
+        $this->assertEquals($this->semVer->compareVersions($v1, $v2), $result);
+    }
+
     /**
      * tests sorting a list of version strings
      * @param array $unsortedVersions
      * @param array $sortedVersions
-     * @dataProvider versionStringsProvider
+     * @dataProvider sortVersionStringsProvider
+     * @covers \PhSemVer\Service\SemVer::sortVersionStrings
      */
     public function testSortVersionStrings(array $unsortedVersions, array $sortedVersions)
     {
         $this->assertTrue($this->semVer->sortVersionStrings($unsortedVersions));
-        $this->assertEquals($sortedVersions, $unsortedVersions);
+        $this->assertEquals($unsortedVersions, $sortedVersions);
     }
 
     /**
      * tests sorting a list of version instances
      * @param array $unsortedVersions
      * @param array $sortedVersions
-     * @dataProvider versionsProvider
+     * @dataProvider sortVersionsProvider
+     * @covers \PhSemVer\Service\SemVer::sortVersions
      */
     public function testSortVersions(array $unsortedVersions, array $sortedVersions)
     {
         $this->assertTrue($this->semVer->sortVersions($unsortedVersions));
-        $this->assertEquals($sortedVersions, $unsortedVersions);
+        $this->assertEquals($unsortedVersions, $sortedVersions);
+    }
+
+    /**
+     * provide list of version string pairs with result
+     * @return array
+     */
+    public function compareVersionStringsProvider()
+    {
+        return array(
+            array('1.2', '1.3', -1),
+        );
+    }
+
+    /**
+     * provide list of version pairs with result
+     * @return array
+     */
+    public function compareVersionsProvider()
+    {
+        return array(
+            array(new Version('1.2'), new Version('1.3'), -1),
+        );
     }
 
     /**
      * provide list of valid version strings
      * @return array
      */
-    public function versionStringsProvider()
+    public function sortVersionStringsProvider()
     {
         return array(
             array(
@@ -116,7 +167,7 @@ class SemVerTest extends \PHPUnit_Framework_TestCase
      * provide list of invalid version strings
      * @return array
      */
-    public function versionsProvider()
+    public function sortVersionsProvider()
     {
         return array(
             array(

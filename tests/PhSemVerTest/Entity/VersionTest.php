@@ -23,7 +23,8 @@ class VersionTest extends \PHPUnit_Framework_TestCase
     /**
      * tests list of valid version strings
      * @param string $version
-     * @dataProvider validProvider
+     * @dataProvider validStringProvider
+     * @covers \PhSemVer\Entity\Version::__construct
      */
     public function testValidVersions($version)
     {
@@ -35,19 +36,32 @@ class VersionTest extends \PHPUnit_Framework_TestCase
      * tests list of invalid version strings
      * @param string $providedVersion
      * @param string $createdVersion
-     * @dataProvider invalidProvider
+     * @dataProvider changedStringProvider
+     * @covers \PhSemVer\Entity\Version::__construct
      */
-    public function testInvalidVersions($providedVersion, $createdVersion)
+    public function testChangedVersions($providedVersion, $createdVersion)
     {
         $v = new Version($providedVersion);
         $this->assertEquals($createdVersion, $v->__toString());
     }
 
     /**
+     * tests list of invalid version strings
+     * @param string $version
+     * @dataProvider invalidStringProvider
+     * @covers \PhSemVer\Entity\Version::__construct
+     * @expectedException \PhSemVer\Exception\InvalidArgumentException
+     */
+    public function testInvalidVersions($version)
+    {
+        $v = new Version($version);
+    }
+
+    /**
      * provide list of valid version strings
      * @return array
      */
-    public function validProvider()
+    public function validStringProvider()
     {
         return array(
             array('1.2.3'),
@@ -62,7 +76,7 @@ class VersionTest extends \PHPUnit_Framework_TestCase
      * provide list of changed version strings
      * @return array
      */
-    public function invalidProvider()
+    public function changedStringProvider()
     {
         return array(
             array('1.2', '1.2.0'),
@@ -72,6 +86,18 @@ class VersionTest extends \PHPUnit_Framework_TestCase
             array('1.2.3-a.', '1.2.3-a'),
             array('1.2.3-a+', '1.2.3-a'),
             array('1.2.3-.', '1.2.3')
+        );
+    }
+
+    /**
+     * provide list of invalid version strings
+     * @return array
+     */
+    public function invalidStringProvider()
+    {
+        return array(
+            array('1'),
+            array('a1.b2.c3'),
         );
     }
 }
