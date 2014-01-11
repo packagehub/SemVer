@@ -225,7 +225,7 @@ class VersionTest extends \PHPUnit_Framework_TestCase
     public function testGetCompareType($version1, $version2, $compareType)
     {
         $method = new \ReflectionMethod('\PhSemVer\Entity\Version', 'getCompareType');
-        $method->setAccessible(TRUE);
+        $method->setAccessible(true);
         $this->assertEquals($compareType, $method->invoke(new Version('1'), $version1, $version2));
     }
 
@@ -239,7 +239,7 @@ class VersionTest extends \PHPUnit_Framework_TestCase
     public function testGetAppendedVersionLevels($version, $compareArray)
     {
         $method = new \ReflectionMethod('\PhSemVer\Entity\Version', 'getAppendedVersionLevels');
-        $method->setAccessible(TRUE);
+        $method->setAccessible(true);
         $this->assertEquals($compareArray, $method->invoke(new Version('1'), $version));
     }
     /**
