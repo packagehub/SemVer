@@ -5,7 +5,7 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  *
- * @copyright Copyright (c) 2013 Gordon Schmidt
+ * @copyright Copyright (c) 2013,2014 Gordon Schmidt
  * @license   MIT
  */
 
@@ -72,7 +72,8 @@ class Version
     public function __construct($versionString, $default = 0)
     {
         $this->default = $default;
-        $re = "/(?P<major>\d+)\.(?P<minor>\d+)(?:\.(?P<patch>\d+)(?:[-]?(?P<pres>[\da-z][\da-z\-]*(?:\.[\da-z\-]+)*))?(?:\+(?P<posts>[\da-z\-]+(?:\.[\da-z\-]+)*))?)?/i";
+        $re = "/(?P<major>\d+)\.(?P<minor>\d+)(?:\.(?P<patch>\d+)(?:[-]?(?P<pres>[\da-z][\da-z\-]*"
+            . "(?:\.[\da-z\-]+)*))?(?:\+(?P<posts>[\da-z\-]+(?:\.[\da-z\-]+)*))?)?/i";
         if (!preg_match($re, $versionString, $matches)) {
               throw new InvalidArgumentException('invalid version string ' . $versionString);
         }

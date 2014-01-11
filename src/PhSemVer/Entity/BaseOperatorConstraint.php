@@ -5,7 +5,7 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  *
- * @copyright Copyright (c) 2013 Gordon Schmidt
+ * @copyright Copyright (c) 2013,2014 Gordon Schmidt
  * @license   MIT
  */
 
@@ -20,6 +20,19 @@ use PhSemVer\Exception\InvalidArgumentException;
  */
 class BaseOperatorConstraint implements ConstraintInterface
 {
+    /**
+     * Known operators of constraint
+     *
+     * @var string
+     */
+    protected $operators = array(
+        '<' => 'matchL',
+        '<=' => 'matchLE',
+        '>' => 'matchG',
+        '>=' => 'matchGE',
+        '==' => 'matchE',
+    );
+
     /**
      * Operator of constraint
      *
@@ -42,7 +55,7 @@ class BaseOperatorConstraint implements ConstraintInterface
      */
     public function __construct($operator, Version $semVer)
     {
-        if (!in_array($operator, array('<', '<=', '>', '>=', '=='))) {
+        if (!array_key_exists($operator, $this->operators)) {
             throw new InvalidArgumentException('invalid oparator "' . $operator . '" provided');
         }
         $this->operator = $operator;
@@ -57,7 +70,7 @@ class BaseOperatorConstraint implements ConstraintInterface
      */
     public function match(Version $version)
     {
-        return eval('return 0 ' . $this->operator . ' $this->semVer->compare($version);');
+        return $this->operators[$this->operator]($version);
     }
 
     /**
@@ -68,5 +81,60 @@ class BaseOperatorConstraint implements ConstraintInterface
     public function __toString()
     {
         return $this->operator . $this->semVer;
+    }
+
+    /**
+     * Check, if semantic version with constraint <
+     *
+     * @param  Version $version
+     * @return boolean
+     */
+    protected function matchL(Version $version)
+    {
+        return 0 < $this->semVer->compare($version);
+    }
+
+    /**
+     * Check, if semantic version with constraint <=
+     *
+     * @param  Version $version
+     * @return boolean
+     */
+    protected function matchLE(Version $version)
+    {
+        return 0 <= $this->semVer->compare($version);
+    }
+
+    /**
+     * Check, if semantic version with constraint >
+     *
+     * @param  Version $version
+     * @return boolean
+     */
+    protected function matchG(Version $version)
+    {
+        return 0 > $this->semVer->compare($version);
+    }
+
+    /**
+     * Check, if semantic version with constraint >=
+     *
+     * @param  Version $version
+     * @return boolean
+     */
+    protected function matchGE(Version $version)
+    {
+        return 0 >= $this->semVer->compare($version);
+    }
+
+    /**
+     * Check, if semantic version with constraint ==
+     *
+     * @param  Version $version
+     * @return boolean
+     */
+    protected function matchE(Version $version)
+    {
+        return 0 == $this->semVer->compare($version);
     }
 }
