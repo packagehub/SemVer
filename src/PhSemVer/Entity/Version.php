@@ -72,8 +72,8 @@ class Version
     public function __construct($versionString, $default = 0)
     {
         $this->default = $default;
-        $re = "/(?P<major>\d+)\.(?P<minor>\d+)(?:\.(?P<patch>\d+)(?:[-]?(?P<pres>[\da-z][\da-z\-]*"
-            . "(?:\.[\da-z\-]+)*))?(?:\+(?P<posts>[\da-z\-]+(?:\.[\da-z\-]+)*))?)?/i";
+        $re = "/(?P<major>\d+)(?:\.(?P<minor>\d+)(?:\.(?P<patch>\d+)(?:[-]?(?P<pres>[\da-z][\da-z\-]*"
+            . "(?:\.[\da-z\-]+)*))?(?:\+(?P<posts>[\da-z\-]+(?:\.[\da-z\-]+)*))?)?)?/i";
         if (!preg_match($re, $versionString, $matches)) {
               throw new InvalidArgumentException('invalid version string ' . $versionString);
         }
@@ -157,7 +157,9 @@ class Version
         if (null === $this->patch) {
             $this->patch = $this->default;
         }
-        $this->patch++;
+        if (empty($this->pres)) {
+            $this->patch++;
+        }
         $this->pres = array();
         $this->posts = array();
 
@@ -223,7 +225,7 @@ class Version
      * Compare arrays of pres or posts from two versions
      *
      * @param  array $version1
-     * @parma  array $version2
+     * @param  array $version2
      * @return int
      */
     protected function compareArray(array $version1, array $version2)
@@ -270,13 +272,14 @@ class Version
      * Get comparison type of two version parts
      *
      * @param  int|string $version1
-     * @parma  int|string $version2
+     * @param  int|string $version2
      * @return string
      */
     protected function getCompareType($version1, $version2)
     {
         $type = (is_int($version1) ? 'i' : 's');
         $type .= (is_int($version2) ? 'i' : 's');
+ 
         return $type;
     }
 

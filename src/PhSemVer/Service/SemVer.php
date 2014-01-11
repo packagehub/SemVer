@@ -59,7 +59,7 @@ class SemVer
      * sort an array of version instances
      *
      * @param  array &$versions
-     * @return bool true on success or false on failure
+     * @return bool  true on success or false on failure
      */
     public function sortVersions(array &$versions)
     {
