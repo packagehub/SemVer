@@ -9,14 +9,16 @@
  * @license   MIT
  */
 
-namespace PhSemVer\Entity;
+namespace PhSemVer\Service;
+
+use PhSemVer\Entity\Version;
 
 /**
- * Model of semantic version and constraint.
+ * Model of semantic version or constraint.
  *
  * @author Gordon Schmidt <schmidt.gordon@web.de>
  */
-class AndConstraint implements ConstraintInterface
+class OrConstraint implements ConstraintInterface
 {
     /**
      * Base constraints
@@ -44,12 +46,12 @@ class AndConstraint implements ConstraintInterface
     public function match(Version $version)
     {
         foreach ($this->constraints as $constraint) {
-            if (!$constraint->match($version)) {
-                return false;
+            if ($constraint->match($version)) {
+                return true;
             }
         }
 
-        return true;
+        return false;
     }
 
     /**
@@ -59,6 +61,6 @@ class AndConstraint implements ConstraintInterface
      */
     public function __toString()
     {
-        return implode(' && ' . $this->constraints);
+        return '(' . implode(' || ', $this->constraints) . ')';
     }
 }

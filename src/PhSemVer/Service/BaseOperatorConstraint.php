@@ -9,8 +9,9 @@
  * @license   MIT
  */
 
-namespace PhSemVer\Entity;
+namespace PhSemVer\Service;
 
+use PhSemVer\Entity\Version;
 use PhSemVer\Exception\InvalidArgumentException;
 
 /**
@@ -18,7 +19,7 @@ use PhSemVer\Exception\InvalidArgumentException;
  *
  * @author Gordon Schmidt <schmidt.gordon@web.de>
  */
-class BaseOperatorConstraint implements ConstraintInterface
+class BaseOperatorConstraint extends AbstractSemVerAware implements ConstraintInterface
 {
     /**
      * Known operators of constraint
@@ -26,11 +27,11 @@ class BaseOperatorConstraint implements ConstraintInterface
      * @var string
      */
     protected $operators = array(
-        '<' => 'matchL',
-        '<=' => 'matchLE',
-        '>' => 'matchG',
-        '>=' => 'matchGE',
-        '==' => 'matchE',
+        '<' => 'compareLess',
+        '<=' => 'compareLessOrEqual',
+        '>' => 'compareGreater',
+        '>=' => 'compareGreaterOrEqual',
+        '==' => 'compareEqual',
     );
 
     /**
@@ -45,21 +46,25 @@ class BaseOperatorConstraint implements ConstraintInterface
      *
      * @var Version
      */
-    protected $semVer;
+    protected $version;
 
     /**
      * Create constraint from operator and version
      *
-     * @param string  $operator
-     * @param Version $semVer
+     * @param string                   $operator
+     * @param string                   $version
+     * @param \PhSemVer\Service\SemVer $semVerService
      */
-    public function __construct($operator, Version $semVer)
+    public function __construct($operator, Version $version, SemVer $semVerService = null)
     {
         if (!array_key_exists($operator, $this->operators)) {
             throw new InvalidArgumentException('invalid oparator "' . $operator . '" provided');
         }
         $this->operator = $operator;
-        $this->semVer = $semVer;
+        $this->version = $version;
+        if (null !== $semVerService) {
+            $this->setSemVerService($semVerService);
+        }
     }
 
     /**
@@ -70,7 +75,9 @@ class BaseOperatorConstraint implements ConstraintInterface
      */
     public function match(Version $version)
     {
-        return $this->operators[$this->operator]($version);
+        $cmp = $this->getSemVerService()->compareVersions($this->version, $version);
+        $method = $this->operators[$this->operator];
+        return $this->$method($cmp);
     }
 
     /**
@@ -80,61 +87,61 @@ class BaseOperatorConstraint implements ConstraintInterface
      */
     public function __toString()
     {
-        return $this->operator . $this->semVer;
+        return $this->operator . $this->version;
     }
 
     /**
-     * Check, if semantic version with constraint <
+     * Compare with constraint <
      *
-     * @param  Version $version
+     * @param  int $cmp
      * @return boolean
      */
-    protected function matchL(Version $version)
+    protected function compareLess($cmp)
     {
-        return 0 < $this->semVer->compare($version);
+        return 0 < $cmp;
     }
 
     /**
-     * Check, if semantic version with constraint <=
+     * Compare with constraint <=
      *
-     * @param  Version $version
+     * @param  int $cmp
      * @return boolean
      */
-    protected function matchLE(Version $version)
+    protected function compareLessOrEqual($cmp)
     {
-        return 0 <= $this->semVer->compare($version);
+        return 0 <= $cmp;
     }
 
     /**
-     * Check, if semantic version with constraint >
+     * Compare with constraint >
      *
-     * @param  Version $version
+     * @param  int $cmp
      * @return boolean
      */
-    protected function matchG(Version $version)
+    protected function compareGreater($cmp)
     {
-        return 0 > $this->semVer->compare($version);
+        return 0 > $cmp;
     }
 
     /**
-     * Check, if semantic version with constraint >=
+     * Compare with constraint >=
      *
-     * @param  Version $version
+     * @param  int $cmp
      * @return boolean
      */
-    protected function matchGE(Version $version)
+    protected function compareGreaterOrEqual($cmp)
     {
-        return 0 >= $this->semVer->compare($version);
+        return 0 >= $cmp;
     }
 
     /**
-     * Check, if semantic version with constraint ==
+     * Compare with constraint ==
      *
-     * @param  Version $version
+     * @param  int $cmp
      * @return boolean
      */
-    protected function matchE(Version $version)
+    protected function compareEqual($cmp)
     {
-        return 0 == $this->semVer->compare($version);
+        return 0 == $cmp;
     }
 }

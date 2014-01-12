@@ -9,7 +9,9 @@
  * @license   MIT
  */
 
-namespace PhSemVer\Entity;
+namespace PhSemVer\Service;
+
+use PhSemVer\Entity\Version;
 
 /**
  * Interface for models of semantic version constraints.

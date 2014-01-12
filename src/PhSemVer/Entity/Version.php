@@ -115,6 +115,16 @@ class Version
         return $this->patch;
     }
 
+    public function getPres()
+    {
+        return $this->pres;
+    }
+
+    public function getPosts()
+    {
+        return $this->posts;
+    }
+
     public function getAppendedString()
     {
         $string = '';
@@ -180,37 +190,6 @@ class Version
     }
 
     /**
-     * Compare with version instance (return as soon as differences are found)
-     *
-     * @param  Version $version
-     * @return int
-     */
-    public function compare(Version $version)
-    {
-        //check major, minor and patch level
-        foreach (array('getMajor', 'getMinor', 'getPatch') as $part) {
-            $p1 = $this->$part();
-            $p2 = $version->$part();
-            if ($p1 != $p2) {
-                return $p1 - $p2;
-            }
-        }
-        foreach (array('pres', 'posts') as $part) {
-            $cmp = (int) empty($this->$part) - (int) empty($version->$part);
-            if (0 != $cmp) {
-                //stop if different
-                return ('pres' == $part) ? $cmp : -$cmp;
-            }
-            $cmp = $this->compareArray($this->$part, $version->$part);
-            if (0 != $cmp) {
-                return $cmp;
-            }
-        }
-
-        return 0;
-    }
-
-    /**
      * Get Stability of version
      *     a version is stable if major >= 1 and no pre-release is appended
      *
@@ -219,68 +198,6 @@ class Version
     public function isStable()
     {
         return $this->getMajor() >= 1 && empty($this->pres);
-    }
-
-    /**
-     * Compare arrays of pres or posts from two versions
-     *
-     * @param  array $version1
-     * @param  array $version2
-     * @return int
-     */
-    protected function compareArray(array $version1, array $version2)
-    {
-        $count = 0;
-        while (isset($version1[$count]) || isset($version2[$count])) {
-            //ending versions are older
-            if (!isset($version1[$count])) {
-                return -1;
-            }
-            if (!isset($version2[$count])) {
-                return 1;
-            }
-            switch ($this->getCompareType($version1[$count], $version2[$count])) {
-                case 'ii':
-                    //both ints
-                    $cmp = $version1[$count] - $version2[$count];
-                    break;
-                case 'is':
-                    //int before string
-                    return -1;
-                    break;
-                case 'si':
-                    //string after int
-                    return 1;
-                    break;
-                case 'ss':
-                default:
-                    //both strings
-                    $cmp = strcasecmp($version1[$count], $version2[$count]);
-                    break;
-            }
-            if (0 != $cmp) {
-                //stop if different
-                return $cmp;
-            }
-            $count++;
-        }
-
-        return 0;
-    }
-
-    /**
-     * Get comparison type of two version parts
-     *
-     * @param  int|string $version1
-     * @param  int|string $version2
-     * @return string
-     */
-    protected function getCompareType($version1, $version2)
-    {
-        $type = (is_int($version1) ? 'i' : 's');
-        $type .= (is_int($version2) ? 'i' : 's');
- 
-        return $type;
     }
 
     /**
