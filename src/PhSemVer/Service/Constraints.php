@@ -66,43 +66,32 @@ class Constraints extends AbstractSemVerAware
     protected function getOperatorConstraint($operator, $version)
     {
         $operator = $this->mapOperator($operator);
-    
-        switch ($operator) {
-            case '!==':
-            case '!=':
-                return new NotConstraint($this->getOperatorConstraint(substr($operator, 1), $version));
-                break;
-            case '=':
-                $semVerService = $this->getSemVerService();
+
+        if ('!==' == $operator || '!=' == $operator) {
+            return new NotConstraint($this->getOperatorConstraint(substr($operator, 1), $version));
+        } elseif ('=' == $operator) {
+            $semVerService = $this->getSemVerService();
+            return new AndConstraint(array(
+                new BaseOperatorConstraint('>=', new Version($version), $semVerService),
+                new BaseOperatorConstraint('<=', new Version($version, PHP_INT_MAX), $semVerService),
+            ));
+        } elseif ('~>' == $operator) {
+            $semVerService = $this->getSemVerService();
+            $minVersion = new Version($version);
+            if (null == $minVersion->getMinor(false)) {
+                //not top constraint
+                return new BaseOperatorConstraint('>=', $minVersion, $semVerService);
+            } else {
                 return new AndConstraint(array(
-                    new BaseOperatorConstraint('>=', new Version($version), $semVerService),
-                    new BaseOperatorConstraint('<=', new Version($version, PHP_INT_MAX), $semVerService),
+                    new BaseOperatorConstraint('>=', $minVersion, $semVerService),
+                    new BaseOperatorConstraint('<', $this->getNextBigVersion($version), $semVerService),
                 ));
-                break;
-            case '~>':
-                $semVerService = $this->getSemVerService();
-                $minVersion = new Version($version);
-                if (null == $minVersion->getMinor(false)) {
-                    //not top constraint
-                    return new BaseOperatorConstraint('>=', $minVersion, $semVerService);
-                } else {
-                    return new AndConstraint(array(
-                        new BaseOperatorConstraint('>=', $minVersion, $semVerService),
-                        new BaseOperatorConstraint('<', $this->getNextBigVersion($version), $semVerService),
-                    ));
-                }
-                break;
-            case '<':
-            case '<=':
-            case '>':
-            case '>=':
-            case '==':
-                $semVerService = $this->getSemVerService();
-                return new BaseOperatorConstraint($operator, new Version($version), $semVerService);
-                break;
-            default:
-                throw new InvalidArgumentException('invalid oparator "' . $operator . '" provided');
-                break;
+            }
+        } elseif (in_array($operator, array('<', '<=', '>', '>=', '=='))) {
+            $semVerService = $this->getSemVerService();
+            return new BaseOperatorConstraint($operator, new Version($version), $semVerService);
+        } else {
+            throw new InvalidArgumentException('invalid oparator "' . $operator . '" provided');
         }
     }
  
