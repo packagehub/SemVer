@@ -42,6 +42,7 @@ class ConstraintsTest extends \PHPUnit_Framework_TestCase
      * @param string $matchString
      * @dataProvider constraintsProvider
      * @covers \PhSemVer\Service\Constraints::create
+     * @covers \PhSemVer\Service\Constraints::getConstraints
      * @covers \PhSemVer\Service\Constraints::getOperatorConstraint
      * @covers \PhSemVer\Service\Constraints::mapOperator
      * @covers \PhSemVer\Service\Constraints::getNextBigVersion
@@ -58,6 +59,7 @@ class ConstraintsTest extends \PHPUnit_Framework_TestCase
      * @expectedException \PhSemVer\Exception\InvalidArgumentException
      * @dataProvider invalidConstraintsProvider
      * @covers \PhSemVer\Service\Constraints::create
+     * @covers \PhSemVer\Service\Constraints::getConstraints
      * @covers \PhSemVer\Service\Constraints::getOperatorConstraint
      */
     public function testCreateException($constraintsString)

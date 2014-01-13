@@ -39,13 +39,10 @@ class Constraints extends AbstractSemVerAware
         $connectorPattern = '\s?(?<connector>&&|,| )?\s?';
         $constraintsPattern = '/' . $connectorPattern . '(?<constraint>' . $intervalConstraintPattern . '|'
             . $operatorConstraintPattern . ')/i';
+
         $count = preg_match_all($constraintsPattern, $constraintsString, $matches);
-        $constraints = array();
-        for ($i = 0; $i < $count; $i++) {
-            if (!empty($matches['oc'][$i])) {
-                $constraints[] = $this->getOperatorConstraint($matches['o'][$i], $matches['v'][$i]);
-            }
-        }
+        $constraints = $this->getConstraints($count, $matches);
+
         $count = count($constraints);
         if (0 == $count) {
             throw new InvalidArgumentException('invalid constraints string ' . $constraintsString);
@@ -53,7 +50,27 @@ class Constraints extends AbstractSemVerAware
             //@todo use connector matches, if available
             return new AndConstraint($constraints);
         }
+
         return $constraints[0];
+    }
+
+    /**
+     * Get Constraints from preg match
+     *
+     * @param int   $count
+     * @param array $matches
+     * @return \PhSemVer\Service\ConstraintInterface[]
+     */
+    protected function getConstraints($count, $matches)
+    {
+        $constraints = array();
+        for ($i = 0; $i < $count; $i++) {
+            if (!empty($matches['oc'][$i])) {
+                $constraints[] = $this->getOperatorConstraint($matches['o'][$i], $matches['v'][$i]);
+            }
+        }
+        
+        return $constraints;
     }
     
     /**
@@ -66,33 +83,32 @@ class Constraints extends AbstractSemVerAware
     protected function getOperatorConstraint($operator, $version)
     {
         $operator = $this->mapOperator($operator);
+        $semVerService = $this->getSemVerService();
 
+        if (in_array($operator, array('<', '<=', '>', '>=', '=='))) {
+            return new BaseOperatorConstraint($operator, new Version($version), $semVerService);
+        }
         if ('!==' == $operator || '!=' == $operator) {
             return new NotConstraint($this->getOperatorConstraint(substr($operator, 1), $version));
-        } elseif ('=' == $operator) {
-            $semVerService = $this->getSemVerService();
+        }
+        if ('=' == $operator) {
             return new AndConstraint(array(
                 new BaseOperatorConstraint('>=', new Version($version), $semVerService),
                 new BaseOperatorConstraint('<=', new Version($version, PHP_INT_MAX), $semVerService),
             ));
-        } elseif ('~>' == $operator) {
-            $semVerService = $this->getSemVerService();
+        }
+        if ('~>' == $operator) {
             $minVersion = new Version($version);
             if (null == $minVersion->getMinor(false)) {
                 //not top constraint
                 return new BaseOperatorConstraint('>=', $minVersion, $semVerService);
-            } else {
-                return new AndConstraint(array(
-                    new BaseOperatorConstraint('>=', $minVersion, $semVerService),
-                    new BaseOperatorConstraint('<', $this->getNextBigVersion($version), $semVerService),
-                ));
             }
-        } elseif (in_array($operator, array('<', '<=', '>', '>=', '=='))) {
-            $semVerService = $this->getSemVerService();
-            return new BaseOperatorConstraint($operator, new Version($version), $semVerService);
-        } else {
-            throw new InvalidArgumentException('invalid oparator "' . $operator . '" provided');
+            return new AndConstraint(array(
+                new BaseOperatorConstraint('>=', $minVersion, $semVerService),
+                new BaseOperatorConstraint('<', $this->getNextBigVersion($version), $semVerService),
+            ));
         }
+        throw new InvalidArgumentException('invalid oparator "' . $operator . '" provided');
     }
  
     /**
