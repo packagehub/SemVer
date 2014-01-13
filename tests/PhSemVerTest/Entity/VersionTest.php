@@ -52,6 +52,7 @@ class VersionTest extends \PHPUnit_Framework_TestCase
      * @param string $createdVersion
      * @dataProvider changedStringProvider
      * @covers \PhSemVer\Entity\Version::__construct
+     * @covers \PhSemVer\Entity\Version::setMatches
      * @covers \PhSemVer\Entity\Version::__toString
      */
     public function testChangedVersions($providedVersion, $createdVersion)

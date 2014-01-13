@@ -74,37 +74,58 @@ class Constraints extends AbstractSemVerAware
      */
     protected function getOperatorConstraint($operator, $version)
     {
-        $semVerService = $this->getSemVerService();
-
         if (in_array($operator, array('<', '<=', '>', '>=', '=='))) {
-            return new BaseOperatorConstraint($operator, new Version($version), $semVerService);
+            return new BaseOperatorConstraint($operator, new Version($version), $this->getSemVerService());
         } elseif (in_array($operator, array('<>', '!=', '!'))) {
-            return new NotConstraint(new AndConstraint(array(
-                new BaseOperatorConstraint('>=', new Version($version), $semVerService),
-                new BaseOperatorConstraint('<=', new Version($version, PHP_INT_MAX), $semVerService),
-            )));
+            return new NotConstraint($this->getAndConstraint($version));
         } elseif (in_array($operator, array('=', ''))) {
-            return new AndConstraint(array(
-                new BaseOperatorConstraint('>=', new Version($version), $semVerService),
-                new BaseOperatorConstraint('<=', new Version($version, PHP_INT_MAX), $semVerService),
-            ));
+            return $this->getAndConstraint($version);
         } elseif (in_array($operator, array('~>', '~'))) {
-            $minVersion = new Version($version);
-            if (null == $minVersion->getMinor(false)) {
-                //not top constraint
-                return new BaseOperatorConstraint('>=', $minVersion, $semVerService);
-            }
-            return new AndConstraint(array(
-                new BaseOperatorConstraint('>=', $minVersion, $semVerService),
-                new BaseOperatorConstraint('<', $this->getNextBigVersion($version), $semVerService),
-            ));
+            return $this->getTildeConstraint($version);
         } elseif ('!==' == $operator) {
             return new NotConstraint(
-                new BaseOperatorConstraint('==', new Version($version), $semVerService)
+                new BaseOperatorConstraint('==', new Version($version), $this->getSemVerService())
             );
         } else {
             throw new InvalidArgumentException('invalid oparator "' . $operator . '" provided');
         }
+    }
+    
+    /**
+     * Get tilde constraint
+     *
+     * @param string $version
+     * @return \PhSemVer\Service\ConstraintInterface
+     */
+    protected function getTildeConstraint($version)
+    {
+        $semVerService = $this->getSemVerService();
+        $minVersion = new Version($version);
+        if (null == $minVersion->getMinor(false)) {
+            //not top constraint
+            return new BaseOperatorConstraint('>=', $minVersion, $semVerService);
+        } else {
+            return new AndConstraint(array(
+                new BaseOperatorConstraint('>=', $minVersion, $semVerService),
+                new BaseOperatorConstraint('<', $this->getNextBigVersion($version), $semVerService),
+            ));
+        }
+    }
+
+    /**
+     * Get and constraint
+     *
+     * @param string $version
+     * @return \PhSemVer\Service\AndConstraint
+     */
+    protected function getAndConstraint($version)
+    {
+        $semVerService = $this->getSemVerService();
+
+        return new AndConstraint(array(
+            new BaseOperatorConstraint('>=', new Version($version), $semVerService),
+            new BaseOperatorConstraint('<=', new Version($version, PHP_INT_MAX), $semVerService),
+        ));
     }
 
     /**

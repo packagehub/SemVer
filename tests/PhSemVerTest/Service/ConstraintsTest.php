@@ -44,6 +44,8 @@ class ConstraintsTest extends \PHPUnit_Framework_TestCase
      * @covers \PhSemVer\Service\Constraints::create
      * @covers \PhSemVer\Service\Constraints::getConstraints
      * @covers \PhSemVer\Service\Constraints::getOperatorConstraint
+     * @covers \PhSemVer\Service\Constraints::getTildeConstraint
+     * @covers \PhSemVer\Service\Constraints::getAndConstraint
      * @covers \PhSemVer\Service\Constraints::getNextBigVersion
      */
     public function testCreate($constraintsString, $matchString)
