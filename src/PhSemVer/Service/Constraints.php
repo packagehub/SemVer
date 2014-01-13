@@ -29,16 +29,8 @@ class Constraints extends AbstractSemVerAware
      */
     public function create($constraintsString)
     {
-        $versionPattern = '[a-z0-9.\-+*]*';
-        $operatorPattern = '(?<o>[<>=!~]*)';
-        $operatorConstraintPattern = '(?<oc>' . $operatorPattern . '\s?(?<v>' . $versionPattern . '))';
-        $openParenthesisPattern = '(?<op>[(\[])';
-        $closeParenthesisPattern = '(?<cp>[)\]])';
-        $intervalConstraintPattern = '(?<ic>' . $openParenthesisPattern . '(?<v1>' . $versionPattern
-            . '),(?<v2>' . $versionPattern . ')' . $closeParenthesisPattern . ')';
-        $connectorPattern = '\s?(?<connector>&&|,| )?\s?';
-        $constraintsPattern = '/' . $connectorPattern . '(?<constraint>' . $intervalConstraintPattern . '|'
-            . $operatorConstraintPattern . ')/i';
+        $constraintsPattern = '/\s?(?<connector>&&|,| )?\s?(?<constraint>(?<ic>(?<op>[(\[])(?<v1>[a-z0-9.\-+*]*)'
+            . ',(?<v2>[a-z0-9.\-+*]*)(?<cp>[)\]]))|(?<oc>(?<o>[<>=!~]*)\s?(?<v>[a-z0-9.\-+*]*)))/i';
 
         $count = preg_match_all($constraintsPattern, $constraintsString, $matches);
         $constraints = $this->getConstraints($count, $matches);
@@ -82,22 +74,21 @@ class Constraints extends AbstractSemVerAware
      */
     protected function getOperatorConstraint($operator, $version)
     {
-        $operator = $this->mapOperator($operator);
         $semVerService = $this->getSemVerService();
 
         if (in_array($operator, array('<', '<=', '>', '>=', '=='))) {
             return new BaseOperatorConstraint($operator, new Version($version), $semVerService);
-        }
-        if ('!==' == $operator || '!=' == $operator) {
-            return new NotConstraint($this->getOperatorConstraint(substr($operator, 1), $version));
-        }
-        if ('=' == $operator) {
+        } elseif (in_array($operator, array('<>', '!=', '!'))) {
+            return new NotConstraint(new AndConstraint(array(
+                new BaseOperatorConstraint('>=', new Version($version), $semVerService),
+                new BaseOperatorConstraint('<=', new Version($version, PHP_INT_MAX), $semVerService),
+            )));
+        } elseif (in_array($operator, array('=', ''))) {
             return new AndConstraint(array(
                 new BaseOperatorConstraint('>=', new Version($version), $semVerService),
                 new BaseOperatorConstraint('<=', new Version($version, PHP_INT_MAX), $semVerService),
             ));
-        }
-        if ('~>' == $operator) {
+        } elseif (in_array($operator, array('~>', '~'))) {
             $minVersion = new Version($version);
             if (null == $minVersion->getMinor(false)) {
                 //not top constraint
@@ -107,34 +98,13 @@ class Constraints extends AbstractSemVerAware
                 new BaseOperatorConstraint('>=', $minVersion, $semVerService),
                 new BaseOperatorConstraint('<', $this->getNextBigVersion($version), $semVerService),
             ));
+        } elseif ('!==' == $operator) {
+            return new NotConstraint(
+                new BaseOperatorConstraint('==', new Version($version), $semVerService)
+            );
+        } else {
+            throw new InvalidArgumentException('invalid oparator "' . $operator . '" provided');
         }
-        throw new InvalidArgumentException('invalid oparator "' . $operator . '" provided');
-    }
- 
-    /**
-     * Map operators
-     *
-     * @param string $operator
-     * @return string
-     */
-    protected function mapOperator($operator)
-    {
-        switch ($operator) {
-            case '<>':
-            case '!':
-                $operator = '!=';
-                break;
-            case '':
-                $operator = '=';
-                break;
-            case '~':
-                $operator = '~>';
-                break;
-            default:
-                break;
-        }
-        
-        return $operator;
     }
 
     /**
