@@ -65,16 +65,13 @@ class Constraints extends AbstractSemVerAware
      */
     protected function getOperatorConstraint($operator, $version)
     {
+        $operator = $this->mapOperator($operator);
+    
         switch ($operator) {
-            case '<>':
-            case '!=':
-            case '!':
-                return new NotConstraint($this->getOperatorConstraint('=', $version));
-                break;
             case '!==':
-                return new NotConstraint($this->getOperatorConstraint('==', $version));
+            case '!=':
+                return new NotConstraint($this->getOperatorConstraint(substr($operator, 1), $version));
                 break;
-            case '':
             case '=':
                 $semVerService = $this->getSemVerService();
                 return new AndConstraint(array(
@@ -82,25 +79,18 @@ class Constraints extends AbstractSemVerAware
                     new BaseOperatorConstraint('<=', new Version($version, PHP_INT_MAX), $semVerService),
                 ));
                 break;
-            case '~':
             case '~>':
                 $semVerService = $this->getSemVerService();
-                $nextBigVersion = new Version($version);
-                if (null == $nextBigVersion->getMinor(false)) {
+                $minVersion = new Version($version);
+                if (null == $minVersion->getMinor(false)) {
                     //not top constraint
-                    return new BaseOperatorConstraint('>=', $nextBigVersion, $semVerService);
-                } elseif (null == $nextBigVersion->getPatch(false)) {
-                    //next major
-                    $nextBigVersion->updateMajor();
+                    return new BaseOperatorConstraint('>=', $minVersion, $semVerService);
                 } else {
-                    //next minor
-                    $nextBigVersion->updateMinor();
+                    return new AndConstraint(array(
+                        new BaseOperatorConstraint('>=', $minVersion, $semVerService),
+                        new BaseOperatorConstraint('<', $this->getNextBigVersion($version), $semVerService),
+                    ));
                 }
-
-                return new AndConstraint(array(
-                    new BaseOperatorConstraint('>=', new Version($version), $semVerService),
-                    new BaseOperatorConstraint('<', $nextBigVersion, $semVerService),
-                ));
                 break;
             case '<':
             case '<=':
@@ -114,5 +104,51 @@ class Constraints extends AbstractSemVerAware
                 throw new InvalidArgumentException('invalid oparator "' . $operator . '" provided');
                 break;
         }
+    }
+ 
+    /**
+     * Map operators
+     *
+     * @param string $operator
+     * @return string
+     */
+    protected function mapOperator($operator)
+    {
+        switch ($operator) {
+            case '<>':
+            case '!':
+                $operator = '!=';
+                break;
+            case '':
+                $operator = '=';
+                break;
+            case '~':
+                $operator = '~>';
+                break;
+            default:
+                break;
+        }
+        
+        return $operator;
+    }
+
+    /**
+     * Get next version depending on definition depth
+     *
+     * @param string $version
+     * @return \PhSemVer\Entity\Version
+     */
+    protected function getNextBigVersion($version)
+    {
+        $nextBigVersion = new Version($version);
+        if (null == $nextBigVersion->getPatch(false)) {
+            //next major
+            $nextBigVersion->updateMajor();
+        } else {
+            //next minor
+            $nextBigVersion->updateMinor();
+        }
+                
+        return $nextBigVersion;
     }
 }
