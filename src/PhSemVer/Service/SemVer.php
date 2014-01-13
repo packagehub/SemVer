@@ -152,29 +152,26 @@ class SemVer
      *
      * @param  int|string $version1
      * @param  int|string $version2
-     * @return string
+     * @return int
      */
     protected function comparePart($version1, $version2)
     {
-        $type = (is_int($version1) ? 'i' : 's');
-        $type .= (is_int($version2) ? 'i' : 's');
-        switch ($type) {
-            case 'ii':
+        if (is_int($version1)) {
+            if (is_int($version2)) {
                 //both ints
                 return $version1 - $version2;
-                break;
-            case 'is':
+            } else {
                 //int before string
                 return -1;
-                break;
-            case 'si':
+            }
+        } else {
+            if (is_int($version2)) {
                 //string after int
                 return 1;
-                break;
-            default:
+            } else {
                 //both strings
                 return strcasecmp($version1, $version2);
-                break;
+            }
         }
     }
 }

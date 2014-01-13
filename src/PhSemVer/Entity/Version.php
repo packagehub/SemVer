@@ -75,20 +75,21 @@ class Version
         $re = "/(?P<major>\d+)(?:\.(?P<minor>\d+)(?:\.(?P<patch>\d+)(?:[-]?(?P<pres>[\da-z][\da-z\-]*"
             . "(?:\.[\da-z\-]+)*))?(?:\+(?P<posts>[\da-z\-]+(?:\.[\da-z\-]+)*))?)?)?/i";
         if (!preg_match($re, $versionString, $matches)) {
-              throw new InvalidArgumentException('invalid version string ' . $versionString);
+            throw new InvalidArgumentException('invalid version string ' . $versionString);
         }
+
         $this->major = (int) $matches['major'];
-        if (isset($matches['minor'])) {
-            $this->minor = (int) $matches['minor'];
+
+        foreach (array('minor', 'patch') as $part) {
+            if (isset($matches[$part])) {
+                $this->$part = (int) $matches[$part];
+            }
         }
-        if (isset($matches['patch'])) {
-            $this->patch = (int) $matches['patch'];
-        }
-        if (isset($matches['pres']) && !empty($matches['pres'])) {
-            $this->pres = $this->getAppendedVersionLevels($matches['pres']);
-        }
-        if (isset($matches['posts']) && !empty($matches['posts'])) {
-            $this->posts = $this->getAppendedVersionLevels($matches['posts']);
+
+        foreach (array('pres', 'posts') as $part) {
+            if (isset($matches[$part]) && !empty($matches[$part])) {
+                $this->$part = $this->getAppendedVersionLevels($matches[$part]);
+            }
         }
     }
 
