@@ -25,4 +25,4 @@ License
 -------
 
 The files in this package are releases under the MIT license.
-You can find a copy of this license in LICENSE.
+You can find a copy of this license in [LICENSE](https://github.com/PackageHub/SemVer/blob/master/LICENSE).

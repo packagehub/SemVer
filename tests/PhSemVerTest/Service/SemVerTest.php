@@ -96,15 +96,15 @@ class SemVerTest extends \PHPUnit_Framework_TestCase
      * tests compare type
      * @param string $version1
      * @param string $version2
-     * @param string $compareType
-     * @dataProvider compareTypeProvider
-     * @covers \PhSemVer\Service\SemVer::compareType
+     * @param mixed $result
+     * @dataProvider comparePartProvider
+     * @covers \PhSemVer\Service\SemVer::comparePart
      */
-    public function testCompareType($version1, $version2, $compareType)
+    public function testComparePart($version1, $version2, $result)
     {
-        $method = new \ReflectionMethod('\PhSemVer\Service\SemVer', 'compareType');
+        $method = new \ReflectionMethod('\PhSemVer\Service\SemVer', 'comparePart');
         $method->setAccessible(true);
-        $this->assertEquals($compareType, $method->invoke($this->semVer, $version1, $version2));
+        $this->assertSame($result, $method->invoke($this->semVer, $version1, $version2));
     }
 
     /**
@@ -271,16 +271,19 @@ class SemVerTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * provide list of compare type strings
+     * provide list of compare part strings
      * @return array
      */
-    public function compareTypeProvider()
+    public function comparePartProvider()
     {
         return array(
-            array(1, 2, 'ii'),
-            array(3, 'foo', 'is'),
-            array('bar', 4, 'si'),
-            array('foo', 'bar', 'ss'),
+            array(1, 1, 0),
+            array(2, 1, 1),
+            array(1, 2, -1),
+            array(3, 'foo', -1),
+            array('bar', 4, 1),
+            array('foo', 'bar', strcasecmp('foo', 'bar')),
+            array('foo', 'foo', strcasecmp('foo', 'foo')),
         );
     }
 }

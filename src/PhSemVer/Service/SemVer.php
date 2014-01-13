@@ -136,25 +136,7 @@ class SemVer
             if (!isset($v2[$count])) {
                 return 1;
             }
-            switch ($this->compareType($v1[$count], $v2[$count])) {
-                case 'ii':
-                    //both ints
-                    $cmp = $v1[$count] - $v2[$count];
-                    break;
-                case 'is':
-                    //int before string
-                    return -1;
-                    break;
-                case 'si':
-                    //string after int
-                    return 1;
-                    break;
-                case 'ss':
-                default:
-                    //both strings
-                    $cmp = strcasecmp($v1[$count], $v2[$count]);
-                    break;
-            }
+            $cmp = $this->comparePart($v1[$count], $v2[$count]);
             if (0 != $cmp) {
                 //stop if different
                 return $cmp;
@@ -166,17 +148,33 @@ class SemVer
     }
 
     /**
-     * Get comparison type of two version parts
+     * Compare two version parts
      *
      * @param  int|string $version1
      * @param  int|string $version2
      * @return string
      */
-    protected function compareType($version1, $version2)
+    protected function comparePart($version1, $version2)
     {
         $type = (is_int($version1) ? 'i' : 's');
         $type .= (is_int($version2) ? 'i' : 's');
- 
-        return $type;
+        switch ($type) {
+            case 'ii':
+                //both ints
+                return $version1 - $version2;
+                break;
+            case 'is':
+                //int before string
+                return -1;
+                break;
+            case 'si':
+                //string after int
+                return 1;
+                break;
+            default:
+                //both strings
+                return strcasecmp($version1, $version2);
+                break;
+        }
     }
 }
