@@ -9,9 +9,9 @@
  * @license   MIT
  */
 
-namespace PhSemVerTest\Service;
+namespace PhSemVerTest\Constraint;
 
-use PhSemVer\Service\AndConstraint;
+use PhSemVer\Constraint\AndConstraint;
 use PhSemVer\Entity\Version;
 
 /**
@@ -23,14 +23,14 @@ class AndConstraintTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * tests list of and constraints
-     * @param \PhSemVer\Service\ConstraintInterface[] $constraints
-     * @param \PhSemVer\Entity\Version                $version
-     * @param bool                                    $match
-     * @param string                                  $string
+     * @param \PhSemVer\Constraint\ConstraintInterface[] $constraints
+     * @param \PhSemVer\Entity\Version                   $version
+     * @param bool                                       $match
+     * @param string                                     $string
      * @dataProvider andProvider
-     * @covers \PhSemVer\Service\AndConstraint::__construct
-     * @covers \PhSemVer\Service\AndConstraint::match
-     * @covers \PhSemVer\Service\AndConstraint::__toString
+     * @covers \PhSemVer\Constraint\AndConstraint::__construct
+     * @covers \PhSemVer\Constraint\AndConstraint::match
+     * @covers \PhSemVer\Constraint\AndConstraint::__toString
      */
     public function testAnd($constraints, Version $version, $match, $string)
     {

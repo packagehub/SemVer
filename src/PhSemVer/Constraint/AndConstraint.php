@@ -9,7 +9,7 @@
  * @license   MIT
  */
 
-namespace PhSemVer\Service;
+namespace PhSemVer\Constraint;
 
 use PhSemVer\Entity\Version;
 

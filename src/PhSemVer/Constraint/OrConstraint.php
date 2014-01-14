@@ -5,36 +5,36 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  *
- * @copyright Copyright (c) 2013 Gordon Schmidt
+ * @copyright Copyright (c) 2013,2014 Gordon Schmidt
  * @license   MIT
  */
 
-namespace PhSemVer\Service;
+namespace PhSemVer\Constraint;
 
 use PhSemVer\Entity\Version;
 
 /**
- * Model of semantic version not constraint.
+ * Model of semantic version or constraint.
  *
  * @author Gordon Schmidt <schmidt.gordon@web.de>
  */
-class NotConstraint implements ConstraintInterface
+class OrConstraint implements ConstraintInterface
 {
     /**
-     * Base constraint
+     * Base constraints
      *
-     * @var ConstraintInterface
+     * @var ConstraintInterface[]
      */
-    protected $constraint;
+    protected $constraints;
 
     /**
      * Create constraint
      *
-     * @param ConstraintInterface $constraint
+     * @param ConstraintInterface[] $constraints
      */
-    public function __construct(ConstraintInterface $constraint)
+    public function __construct($constraints)
     {
-        $this->constraint = $constraint;
+        $this->constraints = $constraints;
     }
 
     /**
@@ -45,7 +45,13 @@ class NotConstraint implements ConstraintInterface
      */
     public function match(Version $version)
     {
-        return !$this->constraint->match($version);
+        foreach ($this->constraints as $constraint) {
+            if ($constraint->match($version)) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     /**
@@ -55,6 +61,6 @@ class NotConstraint implements ConstraintInterface
      */
     public function __toString()
     {
-        return '!' . $this->constraint;
+        return '(' . implode(' || ', $this->constraints) . ')';
     }
 }

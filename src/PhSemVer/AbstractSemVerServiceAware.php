@@ -9,16 +9,17 @@
  * @license   MIT
  */
 
-namespace PhSemVer\Service;
+namespace PhSemVer;
 
 use PhSemVer\Exception\InvalidArgumentException;
+use PhSemVer\Service\SemVer;
 
 /**
  * This class provides an abstract service aware of the SemVer service.
  *
  * @author Gordon Schmidt <schmidt.gordon@web.de>
  */
-abstract class AbstractSemVerAware
+abstract class AbstractSemVerServiceAware
 {
     /**
      * Instance of SemVer service

@@ -9,9 +9,9 @@
  * @license   MIT
  */
 
-namespace PhSemVerTest\Service;
+namespace PhSemVerTest\Constraint;
 
-use PhSemVer\Service\BaseOperatorConstraint;
+use PhSemVer\Constraint\BaseOperatorConstraint;
 use PhSemVer\Service\SemVer;
 use PhSemVer\Entity\Version;
 
@@ -30,14 +30,14 @@ class BaseOperatorConstraintTest extends \PHPUnit_Framework_TestCase
      * @param bool                     $match
      * @param string                   $string
      * @dataProvider baseOperatorProvider
-     * @covers \PhSemVer\Service\BaseOperatorConstraint::__construct
-     * @covers \PhSemVer\Service\BaseOperatorConstraint::match
-     * @covers \PhSemVer\Service\BaseOperatorConstraint::__toString
-     * @covers \PhSemVer\Service\BaseOperatorConstraint::compareLess
-     * @covers \PhSemVer\Service\BaseOperatorConstraint::compareLessOrEqual
-     * @covers \PhSemVer\Service\BaseOperatorConstraint::compareGreater
-     * @covers \PhSemVer\Service\BaseOperatorConstraint::compareGreaterOrEqual
-     * @covers \PhSemVer\Service\BaseOperatorConstraint::compareEqual
+     * @covers \PhSemVer\Constraint\BaseOperatorConstraint::__construct
+     * @covers \PhSemVer\Constraint\BaseOperatorConstraint::match
+     * @covers \PhSemVer\Constraint\BaseOperatorConstraint::__toString
+     * @covers \PhSemVer\Constraint\BaseOperatorConstraint::compareLess
+     * @covers \PhSemVer\Constraint\BaseOperatorConstraint::compareLessOrEqual
+     * @covers \PhSemVer\Constraint\BaseOperatorConstraint::compareGreater
+     * @covers \PhSemVer\Constraint\BaseOperatorConstraint::compareGreaterOrEqual
+     * @covers \PhSemVer\Constraint\BaseOperatorConstraint::compareEqual
      */
     public function testBase($constraints, Version $version, Version $matchVersion, $match, $string)
     {
@@ -50,7 +50,7 @@ class BaseOperatorConstraintTest extends \PHPUnit_Framework_TestCase
     /**
      * tests list of base operator constraints
      * @expectedException \PhSemVer\Exception\InvalidArgumentException
-     * @covers \PhSemVer\Service\BaseOperatorConstraint::__construct
+     * @covers \PhSemVer\Constraint\BaseOperatorConstraint::__construct
      */
     public function testInvalidOperator()
     {

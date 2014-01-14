@@ -11,6 +11,10 @@
 
 namespace PhSemVer\Service;
 
+use PhSemVer\AbstractSemVerServiceAware;
+use PhSemVer\Constraint\AndConstraint;
+use PhSemVer\Constraint\BaseOperatorConstraint;
+use PhSemVer\Constraint\NotConstraint;
 use PhSemVer\Entity\Version;
 use PhSemVer\Exception\InvalidArgumentException;
 
@@ -19,7 +23,7 @@ use PhSemVer\Exception\InvalidArgumentException;
  *
  * @author Gordon Schmidt <schmidt.gordon@web.de>
  */
-class Constraints extends AbstractSemVerAware
+class Constraints extends AbstractSemVerServiceAware
 {
     /**
      * Create constraints from string

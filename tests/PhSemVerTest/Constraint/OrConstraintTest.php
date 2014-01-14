@@ -9,9 +9,9 @@
  * @license   MIT
  */
 
-namespace PhSemVerTest\Service;
+namespace PhSemVerTest\Constraint;
 
-use PhSemVer\Service\OrConstraint;
+use PhSemVer\Constraint\OrConstraint;
 use PhSemVer\Entity\Version;
 
 /**
@@ -23,14 +23,14 @@ class OrConstraintTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * tests list of or constraints
-     * @param \PhSemVer\Service\ConstraintInterface[] $constraints
-     * @param \PhSemVer\Entity\Version                $version
-     * @param bool                                    $match
-     * @param string                                  $string
+     * @param \PhSemVer\Constraint\ConstraintInterface[] $constraints
+     * @param \PhSemVer\Entity\Version                   $version
+     * @param bool                                       $match
+     * @param string                                     $string
      * @dataProvider orProvider
-     * @covers \PhSemVer\Service\OrConstraint::__construct
-     * @covers \PhSemVer\Service\OrConstraint::match
-     * @covers \PhSemVer\Service\OrConstraint::__toString
+     * @covers \PhSemVer\Constraint\OrConstraint::__construct
+     * @covers \PhSemVer\Constraint\OrConstraint::match
+     * @covers \PhSemVer\Constraint\OrConstraint::__toString
      */
     public function testOr($constraints, Version $version, $match, $string)
     {

@@ -9,10 +9,10 @@
  * @license   MIT
  */
 
-namespace PhSemVerTest\Service;
+namespace PhSemVerTest\Constraint;
 
-use PhSemVer\Service\ConstraintInterface;
-use PhSemVer\Service\NotConstraint;
+use PhSemVer\Constraint\ConstraintInterface;
+use PhSemVer\Constraint\NotConstraint;
 use PhSemVer\Entity\Version;
 
 /**
@@ -24,14 +24,14 @@ class NotConstraintTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * tests list of not constraints
-     * @param \PhSemVer\Service\ConstraintInterface $constraint
-     * @param \PhSemVer\Entity\Version              $version
-     * @param bool                                  $match
-     * @param string                                $string
+     * @param \PhSemVer\Constraint\ConstraintInterface $constraint
+     * @param \PhSemVer\Entity\Version                 $version
+     * @param bool                                     $match
+     * @param string                                   $string
      * @dataProvider notProvider
-     * @covers \PhSemVer\Service\NotConstraint::__construct
-     * @covers \PhSemVer\Service\NotConstraint::match
-     * @covers \PhSemVer\Service\NotConstraint::__toString
+     * @covers \PhSemVer\Constraint\NotConstraint::__construct
+     * @covers \PhSemVer\Constraint\NotConstraint::match
+     * @covers \PhSemVer\Constraint\NotConstraint::__toString
      */
     public function testNot(ConstraintInterface $constraint, Version $version, $match, $string)
     {

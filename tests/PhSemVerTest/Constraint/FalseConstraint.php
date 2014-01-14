@@ -9,9 +9,9 @@
  * @license   MIT
  */
 
-namespace PhSemVerTest\Service;
+namespace PhSemVerTest\Constraint;
 
-use PhSemVer\Service\ConstraintInterface;
+use PhSemVer\Constraint\ConstraintInterface;
 use PhSemVer\Entity\Version;
 
 /**

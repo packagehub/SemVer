@@ -9,7 +9,7 @@
  * @license   MIT
  */
 
-namespace PhSemVerTest\Service;
+namespace PhSemVerTest;
 
 use PhSemVer\Service\SemVer;
 
@@ -18,17 +18,17 @@ use PhSemVer\Service\SemVer;
  *
  * @author Gordon Schmidt <schmidt.gordon@web.de>
  */
-class AbstractSemVerAwareTest extends \PHPUnit_Framework_TestCase
+class AbstractSemVerServiceAwareTest extends \PHPUnit_Framework_TestCase
 {
     /**
-     * tests setter and getter of abstract SemVer aware class
-     * @covers \PhSemVer\Service\AbstractSemVerAware::setSemVerService
-     * @covers \PhSemVer\Service\AbstractSemVerAware::getSemVerService
+     * tests setter and getter of abstract SemVer service aware class
+     * @covers \PhSemVer\AbstractSemVerServiceAware::setSemVerService
+     * @covers \PhSemVer\AbstractSemVerServiceAware::getSemVerService
      */
     public function testSetterGetter()
     {
         $semVerService = new SemVer();
-        $stub = $this->getMockForAbstractClass('\PhSemVer\Service\AbstractSemVerAware');
+        $stub = $this->getMockForAbstractClass('\PhSemVer\AbstractSemVerServiceAware');
         $stubSemVerService = $stub->getSemVerService();
         $this->assertEquals($semVerService, $stubSemVerService);
         $this->assertNotSame($semVerService, $stubSemVerService);

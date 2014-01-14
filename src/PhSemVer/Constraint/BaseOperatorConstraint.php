@@ -9,17 +9,19 @@
  * @license   MIT
  */
 
-namespace PhSemVer\Service;
+namespace PhSemVer\Constraint;
 
+use PhSemVer\AbstractSemVerServiceAware;
 use PhSemVer\Entity\Version;
 use PhSemVer\Exception\InvalidArgumentException;
+use PhSemVer\Service\SemVer;
 
 /**
  * Model of semantic version base operator constraint.
  *
  * @author Gordon Schmidt <schmidt.gordon@web.de>
  */
-class BaseOperatorConstraint extends AbstractSemVerAware implements ConstraintInterface
+class BaseOperatorConstraint extends AbstractSemVerServiceAware implements ConstraintInterface
 {
     /**
      * Known operators of constraint

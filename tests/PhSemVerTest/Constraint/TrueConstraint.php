@@ -5,20 +5,21 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  *
- * @copyright Copyright (c) 2013 Gordon Schmidt
+ * @copyright Copyright (c) 2014 Gordon Schmidt
  * @license   MIT
  */
 
-namespace PhSemVer\Service;
+namespace PhSemVerTest\Constraint;
 
+use PhSemVer\Constraint\ConstraintInterface;
 use PhSemVer\Entity\Version;
 
 /**
- * Interface for models of semantic version constraints.
+ * Test Model for an constraint which always matches.
  *
  * @author Gordon Schmidt <schmidt.gordon@web.de>
  */
-interface ConstraintInterface
+class TrueConstraint implements ConstraintInterface
 {
     /**
      * Check, if semantic version matches constraint
@@ -26,12 +27,18 @@ interface ConstraintInterface
      * @param  Version $version
      * @return boolean
      */
-    public function match(Version $version);
+    public function match(Version $version)
+    {
+        return true;
+    }
 
     /**
      * Convert constraint to string
      *
      * @return string
      */
-    public function __toString();
+    public function __toString()
+    {
+        return 'true';
+    }
 }
